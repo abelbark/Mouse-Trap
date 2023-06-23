@@ -1,8 +1,13 @@
+import java.util.*;
 
 int cols, rows;
 //width of the square
 int w = 40;
 ArrayList<Cell> grid = new ArrayList<>();
+
+Random rand = new Random();
+int cheeseX;
+int cheeseY;
 
 //Player
 Mouse player;
@@ -12,30 +17,42 @@ Cheese cheese;
 Buttons hint;
 Buttons newGame;
 
+void gridSize() {
+  size(600, 600);
+  cols = (int)width/w; // total number of columns
+  rows = (int)height/w; // rows
+}
+
+void cheeseRelocate() {
+  cheeseX = rand.nextInt(cols - 3);
+  cheeseY = rand.nextInt(rows);
+}
+
 void setup() {
   size(600, 600);
   cols = (int)width/w; // total number of columns
   rows = (int)height/w; // rows
+  cheeseRelocate();
   
   //creates player
   player = new Mouse(0, 0, loadImage("jerry.png"));
-  
+
   //Creates the cheese
-  cheese = new Cheese(8, 6, loadImage("Queso.png"));
-  
+  cheese = new Cheese(cheeseX, cheeseY, loadImage("Queso.png"));
+
   //creates the buttons
   hint = new Buttons(2, rows - 2, 2, color(120, 200, 0),  "Hint");
   newGame = new Buttons(10, rows - 2, 3, color(235, 190, 0), "New Game");
-  
+
   //make all of these cell objects
   //put them into the array
   for(int j = 0; j < rows; j++){
     for(int i = 0; i < cols; i++){
-      Cell cell = new Cell(i, j); 
-      grid.add(cell); 
+      Cell cell = new Cell(i, j);
+      grid.add(cell);
     }
   }
-  
+
 }
 
 void draw() {
@@ -45,15 +62,19 @@ void draw() {
   }
   //show the player
   player.show();
-  
+
   //show cheese
   cheese.show();
-  
+
   //show the buttons
   hint.show();
   newGame.show();
-  
+
 }
+
+//void newGamePressed() {
+  
+//}
 
 void keyPressed(){
   if(key == CODED){
@@ -67,8 +88,6 @@ void keyPressed(){
       player.i++;
     }
   }
-
-
 }
 
 //trying to create a cell object
@@ -77,18 +96,18 @@ void keyPressed(){
 class Cell{
   int i, j;
   boolean[] walls;
-  
+
   Cell(int i,int j){
     this.i = i;
     this.j = j;
     this.walls = new boolean[]{true,true,true,true};
   }
-  
+
   //helps displays each square
     void show(){
       int x = this.i * w;
       int y = this.j * w;
-      
+
       //botton three rows are for buttons
       //everything else --> walls are built
       if(j >= rows - 3){
@@ -106,14 +125,11 @@ class Cell{
         }if(walls[3]){
             line(x, y+w,x,y);
         }
-      
-          
-         
-          
+
           //noFill();
           //rect(x,y,w,w);
       }
       
     }
-    
+
 }
