@@ -1,75 +1,99 @@
 import java.util.*;
 
 int cols, rows;
-//width of the square
-int w = 40;
+int w = 40;                                                                  // Width of the square
 ArrayList<Cell> grid = new ArrayList<>();
 
 Random rand = new Random();
-int cheeseX;
-int cheeseY;
+int cheeseX;                                                                 // Cheese x coordinate
+int cheeseY;                                                                 // Cheese y coordinate
 
-//Player
-Mouse player;
-//Cheese
-Cheese cheese;
-//Buttons
-Buttons hint;
-Buttons newGame;
+Mouse player;                                                                // Player
+Cheese cheese;                                                               // Cheese
+Buttons hint;                                                                // Hint Button
+Buttons newGame;                                                             // New Game Button
 
-void gridSize() {
-  size(600, 600);
-  cols = (int)width/w; // total number of columns
-  rows = (int)height/w; // rows
-}
+Cell currCell;
+ArrayList<Cell> cellStack = new ArrayList<Cell>();
 
 void cheeseRelocate() {
-  cheeseX = rand.nextInt(cols - 3);
-  cheeseY = rand.nextInt(rows);
+  cheeseX = rand.nextInt(cols);
+  cheeseY = rand.nextInt(rows - 3);
 }
 
 void setup() {
   size(600, 600);
-  cols = (int)width/w; // total number of columns
-  rows = (int)height/w; // rows
-  cheeseRelocate();
+  cols = (int)width/w;                                                       // total number of columns
+  rows = (int)height/w;                                                      // total number of rows
+  cheeseRelocate();                                                          // random location for cheese
   
-  //creates player
-  player = new Mouse(0, 0, loadImage("jerry.png"));
+  player = new Mouse(0, 0, loadImage("jerry.png"));                          // Creates player
+  cheese = new Cheese(cheeseX, cheeseY, loadImage("Queso.png"));             // Creates the cheese
+  
+  hint = new Buttons(2, rows - 2, 2, color(120, 200, 0), "Hint");           //creates the hint button
+  newGame = new Buttons(10, rows - 2, 3, color(235, 190, 0), "New Game");    //creates the New Game button
 
-  //Creates the cheese
-  cheese = new Cheese(cheeseX, cheeseY, loadImage("Queso.png"));
-
-  //creates the buttons
-  hint = new Buttons(2, rows - 2, 2, color(120, 200, 0),  "Hint");
-  newGame = new Buttons(10, rows - 2, 3, color(235, 190, 0), "New Game");
-
-  //make all of these cell objects
-  //put them into the array
   for(int j = 0; j < rows; j++){
     for(int i = 0; i < cols; i++){
-      Cell cell = new Cell(i, j);
-      grid.add(cell);
+      Cell cell = new Cell(i, j);                                            // make all of the cell objects
+      grid.add(cell);                                                        // put them into the grid array
     }
   }
-
+  currCell = grid.get(0);
 }
 
 void draw() {
   background(2000);
   for(int i = 0; i < grid.size(); i++){
-    grid.get(i).show(); //display the whole grid
+    grid.get(i).show();                                                     // display the whole grid
   }
-  //show the player
-  player.show();
+  
+  player.show();                                                            // show the player
+  cheese.show();                                                            // show the cheese
+  hint.show();                                                              // show the Hint button
+  newGame.show();                                                           // show the New Game button
+  
+  currCell.cellVisited = true;
+  currCell.highlight();
 
-  //show cheese
-  cheese.show();
+  Cell nextCell = currCell.checkNeighbors();
+  
+  if (nextCell != null) {
+    nextCell.cellVisited = true;
+    cellStack.add(currCell);
+    removeCellWalls(currCell, nextCell);
+    currCell = nextCell;
+  } else if (cellStack.size() > 0) {
+    currCell = cellStack.remove(cellStack.size() - 1);
+  }
 
-  //show the buttons
-  hint.show();
-  newGame.show();
+}
 
+int index(int indexX, int indexY) {
+  if ((indexX < 0) || (indexY < 0) || (indexX > (cols - 1)) || (indexY > (rows - 1))) {
+    return 0;
+  }
+  return (indexX + indexY * cols);
+}
+
+void removeCellWalls(Cell cellOne, Cell cellTwo) {
+  int tempVarX = cellOne.cellX - cellTwo.cellX;
+  if (tempVarX == 1) {
+    cellOne.cellWalls[3] = false;
+    cellTwo.cellWalls[1] = false;
+  } else if (tempVarX == -1) {
+    cellOne.cellWalls[1] = false;
+    cellTwo.cellWalls[3] = false;
+  }
+  
+  int tempVarY = cellOne.cellY - cellTwo.cellY;
+  if (tempVarY == 1) {
+    cellOne.cellWalls[0] = false;
+    cellTwo.cellWalls[2] = false;
+  } else if (tempVarY == -1) {
+    cellOne.cellWalls[2] = false;
+    cellTwo.cellWalls[0] = false;
+  }
 }
 
 //void newGamePressed() {
@@ -79,57 +103,13 @@ void draw() {
 void keyPressed(){
   if(key == CODED){
     if(keyCode == UP){
-      player.j--;
+      player.userMouseY--;
     } else if(keyCode == DOWN){
-      player.j++;
+      player.userMouseY++;
     } else if(keyCode == LEFT){
-      player.i--;
+      player.userMouseX--;
     } else if(keyCode == RIGHT){
-      player.i++;
+      player.userMouseX++;
     }
   }
-}
-
-//trying to create a cell object
-// i is column number
-// j is row number
-class Cell{
-  int i, j;
-  boolean[] walls;
-
-  Cell(int i,int j){
-    this.i = i;
-    this.j = j;
-    this.walls = new boolean[]{true,true,true,true};
-  }
-
-  //helps displays each square
-    void show(){
-      int x = this.i * w;
-      int y = this.j * w;
-
-      //botton three rows are for buttons
-      //everything else --> walls are built
-      if(j >= rows - 3){
-        fill(0, 0, 0);
-        noStroke();
-        rect(x, y, w, w);
-      } else {
-        stroke(255);
-        if(walls[0]){
-          line(x,y,x+w,y);
-        }if(walls[1]){
-            line(x+w,y,x+w,y+w);
-        }if(walls[2]){
-            line(x+w,y+w,x+w,y+w);
-        }if(walls[3]){
-            line(x, y+w,x,y);
-        }
-
-          //noFill();
-          //rect(x,y,w,w);
-      }
-      
-    }
-
 }

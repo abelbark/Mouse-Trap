@@ -3,20 +3,20 @@
 //not too close to the player
 class Cheese{
 
-  int i, j;
+  int cheeseX, chesseY;
   int w = 40;
   PImage cheddar;
 
-  Cheese(int i, int j, PImage cheddar){
-    this.i = i;
-    this.j = j;
+  Cheese(int x, int y, PImage cheddar){
+    this.cheeseX = x;
+    this.chesseY = y;
     this.cheddar = cheddar;
   }
 
   void show(){
-    int x = this.i * w;
-    int y = this.j * w;
-    image(cheddar, x, y, w, w);
+    int tempCheeseX = this.cheeseX * w;
+    int tempCheeseY = this.chesseY* w;
+    image(cheddar, tempCheeseX, tempCheeseY, w, w);
 
   }
 

@@ -1,20 +1,20 @@
 
 class Mouse{
 
-  int i, j;
+  int userMouseX, userMouseY;
   int w = 40;
   PImage jerry;
 
-  Mouse(int i, int j, PImage jerry){
-    this.i = i;
-    this.j = j;
+  Mouse(int x, int y, PImage jerry){
+    this.userMouseX = x;
+    this.userMouseY = y;
     this.jerry = jerry;
   }
 
   void show(){
-    int x = this.i * w;
-    int y = this.j * w;
-    image(jerry, x, y, w, w);
+    int tempMouseX = this.userMouseX * w;
+    int tempMouseY = this.userMouseY * w;
+    image(jerry, tempMouseX, tempMouseY, w, w);
   }
 
 
