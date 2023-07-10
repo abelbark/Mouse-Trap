@@ -1,16 +1,17 @@
-// maze and cell implementation based off of videos provided by "The Coding Train"
-// https://youtu.be/HyK_Q5rrcr4
+// Contributors: Abel Abarca & Lilianna Rosales
 
 class Cell {
-  int cellX, cellY;
+  int cellX, cellY;                                                          // cellX is column number, cellY is row number
   int tempX, tempY;
+  int cellPath;
+  int f, g, h;                                                               // F(n) = g(n) + h(n)
+  
   boolean[] cellWalls;
   boolean cellVisited = false;
-  int f, g, h;
+  
   ArrayList<Cell> neighbors;
   Cell previous;
-  int cellPath;
-
+  
   Cell(int x, int y) {
     this.cellX = x;
     this.cellY = y;
@@ -24,6 +25,7 @@ class Cell {
 
   Cell checkNeighbors() {
     ArrayList<Cell> cellNeighbors = new ArrayList<Cell>();
+
     Cell cellTop = grid.get(index(cellX, (cellY - 1)));
     Cell cellRight = grid.get(index((cellX + 1), cellY));
     Cell cellBottom = grid.get(index(cellX, (cellY + 1)));
@@ -57,6 +59,7 @@ class Cell {
     rect(tempX, tempX, w, w);
   }
 
+
   // helps displays each square
   void show() {
     tempX = this.cellX * w;
@@ -84,50 +87,49 @@ class Cell {
   }
 
   void addNeighbors() {
-    int tempCellX = this.cellX;
-    int tempCellY = this.cellY;
-        
-    if (tempCellX < cols - 1) {
-      this.neighbors.add(grid.get(tempCellX + 1 + tempCellY * cols));
+    int i = this.cellX;
+    int j = this.cellY;
+    if (i < cols - 1) {
+      this.neighbors.add(grid.get(i + 1 + j * cols));
     }
-    if (tempCellX > 0) {
-      this.neighbors.add(grid.get(tempCellX - 1 + tempCellY * cols));
+    if (i > 0) {
+      this.neighbors.add(grid.get(i - 1 + j * cols));
     }
-    if (tempCellY < rows - 1) {
-      this.neighbors.add(grid.get(tempCellX + (tempCellY + 1) * cols));
+    if (j < rows - 1) {
+      this.neighbors.add(grid.get(i + (j + 1) * cols));
     }
-    if (tempCellY > 0) {
-      this.neighbors.add(grid.get(tempCellX + (tempCellY - 1) * cols));
+    if (j > 0) {
+      this.neighbors.add(grid.get(i + (j - 1) * cols));
     }
   }
-  
+
   void removeNeighbor() {
     int numNeighbors = this.neighbors.size();
-    
+
     Cell[] neighborsToDelete = new Cell[numNeighbors];
     int deleteCount = 0;
-    
-    for(int i = 0; i < numNeighbors; i++) {
+
+    for (int i = 0; i < numNeighbors; i++) {
       Cell remove = this.neighbors.get(i);
       boolean removeLeft = remove.cellX < this.cellX && this.cellWalls[3];
       boolean removeRight = remove.cellX > this.cellX && this.cellWalls[1];
       boolean removeTop = remove.cellY < this.cellY && this.cellWalls[0];
       boolean removeBottom = remove.cellY > this.cellY && this.cellWalls[2];
-      
-      if(removeLeft || removeRight || removeTop || removeBottom) {
+
+      if (removeLeft || removeRight || removeTop || removeBottom) {
         neighborsToDelete[deleteCount] = remove;
         deleteCount++;
       }
     }
-    
-    for(int i = 0; i < deleteCount; i++){
-      this.neighbors.remove(neighborsToDelete[i]); 
+
+    for (int i = 0; i < deleteCount; i++) {
+      this.neighbors.remove(neighborsToDelete[i]);
     }
   }
-  
+
   void printNeighbors() {
     StringBuilder str = new StringBuilder("(" + this.cellX + ", " + this.cellY + ") Neighbors: ");
-    for(int i = 0; i < this.neighbors.size(); i++) {
+    for (int i = 0; i < this.neighbors.size(); i++) {
       Cell temp = this.neighbors.get(i);
       str.append("(" + temp.cellX + ", " + temp.cellY + ")");
     }

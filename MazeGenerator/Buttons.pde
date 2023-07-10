@@ -1,22 +1,22 @@
+// Contributors: Abel Abarca & Lilianna Rosales
 
 class Buttons {
 
   int buttonX, buttonY;
-  int w = 40; //width of a single cell
-  int width; // #number of cells that I want thw width to be
+  int w = 40;                                                                  // Width of a single cell
+  int width;                                                                   // Number of cells for the width of the graph
   color buttonColor;
   String label;
   boolean isClicked = false;
 
-  Buttons(int X, int Y, int width, color buttonColor, String label){
-    this.buttonX = X;
-    this.buttonY = Y;
-    this.width = width;
-    this.buttonColor = buttonColor;
-    this.label = label;
-
+  Buttons(int inputX, int inputY, int inputwidth, color inputColor, String inputLabel) {
+    this.buttonX = inputX;
+    this.buttonY = inputY;
+    this.width = inputwidth;
+    this.buttonColor = inputColor;
+    this.label = inputLabel;
   }
-  
+
   boolean buttonPressed(int inputX, int inputY) {
     int buttonXW = this.buttonX * w;
     int buttonYW = this.buttonY * w;
@@ -31,14 +31,11 @@ class Buttons {
       resetPath();
       generatePath();
     } else if (this == newGame) {
-      player.userMouseX = 0;
-      player.userMouseY = 0;
       cheese.randomPos(player);
-      resetPath();
     }
   }
 
-  void show(){
+  void show() {
     int tempButtonX = this.buttonX * w;
     int tempButtonY = this.buttonY * w;
 
