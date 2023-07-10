@@ -2,32 +2,32 @@
 
 // generates path from players position to the cheese
 void generatePath() {
+  //updating path
   resetPath();
-  openSet.add(start);
+  openSet.add(start);                              //add the players pos to the open set
 
   if (!initializeMaze) {
     for (int i = 0; i < grid.size(); i++) {
-      grid.get(i).addNeighbors();                                      // add neighbors
+      grid.get(i).addNeighbors();                                      // add neighbors to current cell
     }
   }
 
   //find the one thats the lowest index
-  while (openSet.size() > 0) {                                         // loop through everything
-    int lowestIndex = 0;
-    for (int i = 0; i < openSet.size(); i++) {
-      if (openSet.get(i).f < openSet.get(lowestIndex).f) {             // find the one thats the lowest index
+  while (openSet.size() > 0) {                                         // loop through everything until open set is empty
+    int lowestIndex = 0;                                              // keep track of the index of the cell with lowest f value
+    for (int i = 0; i < openSet.size(); i++) {                        
+      if (openSet.get(i).f < openSet.get(lowestIndex).f) {             // find the one thats the lowest index 
         lowestIndex = i;
       }
     }
 
-    Cell current = openSet.get(lowestIndex);
+    Cell current = openSet.get(lowestIndex);                         //assign the lowest to current
 
-    if (current.equals(end)) {
-      // find the path, start with empty list and add to the end of list and backtrack
-      path = new ArrayList<>();
+    if (current.equals(end)) {                            // checks if the current cell is the end pos                                                
+      path = new ArrayList<>();                          //will store the path
       Cell temp = current;
       path.add(temp);
-      while (temp.previous != null) {
+      while (temp.previous != null) {                  //will backtrack to the start pos, following the previous ref
         path.add(temp.previous);
         temp = temp.previous;
       }
@@ -35,15 +35,15 @@ void generatePath() {
       System.out.println("Done!");
       break;
     } else {
-      removeFromArray(openSet, current);
+      removeFromArray(openSet, current);                      
       closedSet.add(current);
 
-      ArrayList<Cell> neighbors = current.neighbors;
+      ArrayList<Cell> neighbors = current.neighbors;            //assigns the current cells neighbors to neighbors
       for (Cell neighbor : neighbors) {
-        if (!closedSet.contains(neighbor)) {
-          int tempG = current.g + 1;
-          if (openSet.contains(neighbor)) {
-            if (tempG < neighbor.g) {
+        if (!closedSet.contains(neighbor)) {                   //iterate the current cell neighbors to see if theyre not in closed set
+          int tempG = current.g + 1;                          //calculate the g value 
+          if (openSet.contains(neighbor)) {                  
+            if (tempG < neighbor.g) {                        //find the lowest g value and update the neighbor.g
               neighbor.g = tempG;
             }
           } else {
@@ -51,14 +51,14 @@ void generatePath() {
             openSet.add(neighbor);
           }
           // adding heuristics
-          neighbor.h = heuristic(neighbor, end);
-          neighbor.f = neighbor.g + neighbor.h;
-          neighbor.previous = current;
+          neighbor.h = heuristic(neighbor, end);                 //calculates heuristic value from the neighbor to cell
+          neighbor.f = neighbor.g + neighbor.h;                  //calculates f value 
+          neighbor.previous = current;                          //path between start and neighbor cell
         }
       }
     }
   }
-  System.out.println("No Solution");
+  System.out.println("No Solution");                        //no path is found
 }
 
 // loops through the array to see if it has a specific element and delete it from the array
