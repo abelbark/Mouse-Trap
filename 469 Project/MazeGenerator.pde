@@ -51,9 +51,12 @@ void setup() {
 // will reset everything so a new path
 // can be generated at a different location
 void resetPath() {
+  //the start is being assigned to the players current position
   start = grid.get(player.userMouseX + player.userMouseY * cols);
+  //the end is being assigned to the position of the cheese
   end = grid.get(cheese.cheeseX + cheese.cheeseY * cols);
 
+  //clear the path and sets
   path.clear();
   openSet.clear();
   closedSet.clear();
