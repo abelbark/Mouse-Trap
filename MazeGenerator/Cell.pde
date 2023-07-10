@@ -152,6 +152,7 @@ class Cell {
     }
   }
 
+  //pink
   void showClosedSet() {
     int x = this.cellX * w;
     int y = this.cellY * w;
@@ -162,6 +163,7 @@ class Cell {
     }
   }
 
+  //green
   void showOpenSet() {
     int x = this.cellX * w;
     int y = this.cellY * w;
